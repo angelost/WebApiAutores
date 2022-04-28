@@ -15,15 +15,58 @@ namespace WebApiAutores.Controllers
             this.context = context;
         }
 
-        [HttpGet]
+        [HttpGet()] // api/autores
+        [HttpGet("listado")] // api/autores/listado
+        [HttpGet("/listado")] // listado
         public async Task<ActionResult<List<Autor>>> Get()
         {
             return await context.Autores.Include(x => x.Libros).ToListAsync();
         }
 
-        [HttpPost]
-        public async Task<ActionResult> Post(Autor autor)
+        [HttpGet("primero")] // api/autores/primero
+        public async Task<ActionResult<Autor>> PrimerAutor()
         {
+            return await context.Autores.FirstOrDefaultAsync();
+        }
+
+        [HttpGet("{id:int}")] // variable de ruta con restriccion
+        //[HttpGet("{id:int}/{param2?}")] variable de ruta opcional
+        //[HttpGet("{id:int}/{param2= persona}")] variable de ruta por defecto
+        public async Task<ActionResult<Autor>> Get(int id)
+        {
+            var autor =  await context.Autores.FirstOrDefaultAsync(x => x.Id == id);
+
+            if(autor == null)
+            {
+                return NotFound();
+            }
+
+            return autor;
+        }
+
+        [HttpGet("{nombre}")] //variable de ruta sin restriccion
+        public async Task<ActionResult<Autor>> Get([FromRoute]string nombre)
+        {
+            var autor = await context.Autores.FirstOrDefaultAsync(x => x.Nombre.Contains(nombre));
+
+            if (autor == null)
+            {
+                return NotFound();
+            }
+
+            return autor;
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> Post([FromBody]Autor autor)
+        {
+            var existeAutor = await context.Autores.AnyAsync(x => x.Nombre == autor.Nombre);
+
+            if (existeAutor)
+            {
+                return BadRequest($"Ya existe un autor con el nombre {autor.Nombre}");
+            }
+
             context.Add(autor);
             await context.SaveChangesAsync();
             return Ok();
