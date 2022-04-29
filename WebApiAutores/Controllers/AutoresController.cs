@@ -10,23 +10,15 @@ namespace WebApiAutores.Controllers
     {
         private readonly ApplicationDbContext context;
 
-        public AutoresController(ApplicationDbContext context)
+        public AutoresController(ApplicationDbContext context, ILogger<AutoresController> logger)
         {
-            this.context = context;
+            this.context = context;            
         }
 
         [HttpGet()] // api/autores
-        [HttpGet("listado")] // api/autores/listado
-        [HttpGet("/listado")] // listado
         public async Task<ActionResult<List<Autor>>> Get()
         {
-            return await context.Autores.Include(x => x.Libros).ToListAsync();
-        }
-
-        [HttpGet("primero")] // api/autores/primero
-        public async Task<ActionResult<Autor>> PrimerAutor()
-        {
-            return await context.Autores.FirstOrDefaultAsync();
+            return await context.Autores.ToListAsync();
         }
 
         [HttpGet("{id:int}")] // variable de ruta con restriccion
