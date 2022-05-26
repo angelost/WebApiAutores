@@ -85,7 +85,7 @@ namespace WebApiAutores.Controllers
             var llave = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["llavejwt"]));
             var creds = new SigningCredentials(llave, SecurityAlgorithms.HmacSha256);
 
-            var expiracion = DateTime.UtcNow.AddMinutes(30);
+            var expiracion = DateTime.UtcNow.AddYears(1);
 
             var securityToken = new JwtSecurityToken(issuer: null, audience: null, claims: claims, expires:expiracion, signingCredentials: creds);
 
