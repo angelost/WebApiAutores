@@ -6,6 +6,7 @@ using Microsoft.OpenApi.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using System.Text.Json.Serialization;
+using WebApiAutores.Servicios;
 
 namespace WebApiAutores
 {
@@ -89,6 +90,7 @@ namespace WebApiAutores
             });
 
             services.AddDataProtection();
+            services.AddTransient<HashService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
