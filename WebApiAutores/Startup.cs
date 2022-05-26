@@ -87,6 +87,8 @@ namespace WebApiAutores
                     builder.WithOrigins("https://www.apirequest.io").AllowAnyMethod().AllowAnyHeader();
                 });
             });
+
+            services.AddDataProtection();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
