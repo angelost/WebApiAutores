@@ -22,7 +22,7 @@ namespace WebApiAutores.Controllers
             this.mapper = mapper;
         }
 
-        [HttpGet(Name = "obtenerAutores")] // api/autores
+        [HttpGet(Name = "obtenerAutores")]
         [AllowAnonymous]
         public async Task<ActionResult<List<AutorDTO>>> Get()
         {
@@ -30,9 +30,7 @@ namespace WebApiAutores.Controllers
             return mapper.Map<List<AutorDTO>>(autores);
         }
 
-        [HttpGet("{id:int}", Name = "obtenerAutor")] // variable de ruta con restriccion
-        //[HttpGet("{id:int}/{param2?}")] variable de ruta opcional
-        //[HttpGet("{id:int}/{param2= persona}")] variable de ruta por defecto
+        [HttpGet("{id:int}", Name = "obtenerAutor")]
         public async Task<ActionResult<AutorDTOConLibros>> Get(int id)
         {
             var autor =  await context.Autores
@@ -45,10 +43,21 @@ namespace WebApiAutores.Controllers
                 return NotFound();
             }
 
-            return mapper.Map<AutorDTOConLibros>(autor);
+            var dto = mapper.Map<AutorDTOConLibros>(autor);
+            GenerarEnlaces(dto);
+            return dto;
         }
 
-        [HttpGet("{nombre}", Name = "obtenerAutorPorNombre")] //variable de ruta sin restriccion
+        private void GenerarEnlaces(AutorDTO autorDTO)
+        {
+            autorDTO.Enlaces.Add(new DatoHATEOAS(enlace: Url.Link("obtenerAutor", new { id = autorDTO.Id }), descripcion: "self", metodo: "GET"));
+
+            autorDTO.Enlaces.Add(new DatoHATEOAS(enlace: Url.Link("actualizarAutor", new { id = autorDTO.Id }), descripcion: "autor-actualizar", metodo: "PUT"));
+
+            autorDTO.Enlaces.Add(new DatoHATEOAS(enlace: Url.Link("borrarAutor", new { id = autorDTO.Id }), descripcion: "autor-borrar", metodo: "DELETE"));
+        }
+
+        [HttpGet("{nombre}", Name = "obtenerAutorPorNombre")]
         public async Task<ActionResult<List<AutorDTO>>> Get([FromRoute]string nombre)
         {
             var autores = await context.Autores.Where(x => x.Nombre.Contains(nombre)).ToListAsync();
