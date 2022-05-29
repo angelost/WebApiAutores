@@ -48,6 +48,7 @@ namespace WebApiAutores
             {
                 c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "WebApiAutores", Version = "v1" });
                 c.SwaggerDoc("v2", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "WebApiAutores", Version = "v2" });
+                c.OperationFilter<AgregarParametroXVersion>();
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Name = "Authorization",
