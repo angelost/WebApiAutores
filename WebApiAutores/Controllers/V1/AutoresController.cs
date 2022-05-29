@@ -14,6 +14,7 @@ namespace WebApiAutores.Controllers.V1
     [CabeceraEstaPresente("x-version", "1")]
     //[Route("api/v1/autores")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "EsAdmin")]
+    //[ApiConventionType(typeof(DefaultApiConventions))]
     public class AutoresController : ControllerBase
     {
         private readonly ApplicationDbContext context;
@@ -39,6 +40,8 @@ namespace WebApiAutores.Controllers.V1
         [HttpGet("{id:int}", Name = "obtenerAutorv1")]
         [AllowAnonymous]
         [ServiceFilter(typeof(HATEOASAutorFilterAttribute))]
+        //[ProducesResponseType(404)]
+        //[ProducesResponseType(200)]
         public async Task<ActionResult<AutorDTOConLibros>> Get(int id, [FromHeader] string incluirHATEOAS)
         {
             var autor =  await context.Autores
@@ -100,6 +103,11 @@ namespace WebApiAutores.Controllers.V1
             return NoContent();
         }
 
+        /// <summary>
+        /// Borra un autor
+        /// </summary>
+        /// <param name="id">Id del autor a borrar</param>
+        /// <returns></returns>
         [HttpDelete("{id:int}", Name = "borrarAutorv1")]
         public async Task<ActionResult> Delete(int id)
         {

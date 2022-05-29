@@ -1,15 +1,18 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.IdentityModel.Tokens.Jwt;
+using System.Reflection;
 using System.Text;
 using System.Text.Json.Serialization;
 using WebApiAutores.Servicios;
 using WebApiAutores.Utilidades;
 
+[assembly: ApiConventionType(typeof(DefaultApiConventions))]
 namespace WebApiAutores
 {
     public class Startup
@@ -46,7 +49,21 @@ namespace WebApiAutores
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "WebApiAutores", Version = "v1" });
+                c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo {
+                    Title = "WebApiAutores",
+                    Version = "v1",
+                    Description = "Este es un web api para trabajar con autores y libros",
+                    Contact = new OpenApiContact
+                    {
+                        Email = "angelo@hotmail.com",
+                        Name = "Angelo Gonzalez",
+                        Url = new Uri("https://gavilan.blog")
+                    },
+                    License = new OpenApiLicense
+                    {
+                        Name = "MIT"
+                    }
+                });
                 c.SwaggerDoc("v2", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "WebApiAutores", Version = "v2" });
                 c.OperationFilter<AgregarParametroXVersion>();
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -73,6 +90,11 @@ namespace WebApiAutores
                     }
 
                 });
+
+                var archivoXML = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var rutaXML = Path.Combine(AppContext.BaseDirectory, archivoXML);
+                c.IncludeXmlComments(rutaXML);
+
             });
 
             services.AddAutoMapper(typeof(Startup));
