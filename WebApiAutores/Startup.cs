@@ -9,6 +9,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
 using System.Text;
 using System.Text.Json.Serialization;
+using WebApiAutores.Filtros;
 using WebApiAutores.Servicios;
 using WebApiAutores.Utilidades;
 
@@ -29,6 +30,7 @@ namespace WebApiAutores
         {
             services.AddControllers(opciones =>
             {
+                opciones.Filters.Add(typeof(FiltroDeExepcion));
                 opciones.Conventions.Add(new SwaggerAgrupaPorVersion());
             })
                 .AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles).AddNewtonsoftJson();         
@@ -117,7 +119,9 @@ namespace WebApiAutores
 
             services.AddTransient<GeneradorEnlaces>();
             services.AddTransient<HATEOASAutorFilterAttribute>();
-            services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();            
+            services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+
+            services.AddApplicationInsightsTelemetry(Configuration["ApplicationInsights:ConnectionString"]);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
